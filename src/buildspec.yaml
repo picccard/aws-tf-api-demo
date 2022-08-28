@@ -1,0 +1,9 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - ls -laR
+      - zip -j ${LAMBDA_CODE_ZIP_FILE_NAME} hello/lambda_function.py
+  post_build:
+    commands:
+      - aws lambda update-function-code --function-name ${LAMBDA_FUNCTION_NAME} --zip-file fileb://${LAMBDA_CODE_ZIP_FILE_NAME} --region ${LAMBDA_REGION}
