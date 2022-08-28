@@ -74,7 +74,7 @@ resource "aws_codepipeline" "python_app_pipeline" {
       category = "Source"
       configuration = {
         "BranchName" = aws_codecommit_repository.api.default_branch
-        "PollForSourceChanges" = "true" # true starts pipeline on every codechange, no need for event
+        "PollForSourceChanges" = "false" # true starts pipeline on every codechange, no need for event
         "RepositoryName" = aws_codecommit_repository.api.repository_name
       }
       #input_artifacts = []
@@ -125,4 +125,25 @@ resource "aws_codepipeline" "python_app_pipeline" {
   }
 }
 
+resource "aws_cloudwatch_event_rule" "startpipeline" {
+  name        = "start-cicd-pipeline"
+  description = "start-cicd-pipeline"
 
+  event_pattern = jsonencode({
+    "source" : ["aws.codecommit"],
+    "detail-type" : ["CodeCommit Repository State Change"],
+    "resources" : ["${aws_codecommit_repository.api.arn}"],
+    "detail" : {
+      "event" : ["referenceCreated", "referenceUpdated"],
+      "referenceType" : ["branch"],
+      "referenceName" : ["main"]
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "pipeline" {
+  rule      = aws_cloudwatch_event_rule.startpipeline.name
+  arn       = aws_codepipeline.python_app_pipeline.arn
+
+  role_arn = aws_iam_role.event_role.arn
+}
