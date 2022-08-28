@@ -34,6 +34,7 @@ resource "aws_apigatewayv2_stage" "lambda" {
   }
 }
 
+# start block /hello
 resource "aws_apigatewayv2_integration" "hello" {
   api_id = aws_apigatewayv2_api.lambda.id
 
@@ -49,7 +50,7 @@ resource "aws_apigatewayv2_route" "hello" {
   target    = "integrations/${aws_apigatewayv2_integration.hello.id}"
 }
 
-resource "aws_lambda_permission" "api_gw" {
+resource "aws_lambda_permission" "hello" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.hello.function_name
@@ -57,4 +58,30 @@ resource "aws_lambda_permission" "api_gw" {
 
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
 }
+# end block /hello
 
+# start block /event
+resource "aws_apigatewayv2_integration" "event" {
+  api_id = aws_apigatewayv2_api.lambda.id
+
+  integration_uri    = aws_lambda_function.event.invoke_arn
+  integration_type   = "AWS_PROXY"
+  integration_method = "POST"
+}
+
+resource "aws_apigatewayv2_route" "event" {
+  api_id = aws_apigatewayv2_api.lambda.id
+
+  route_key = "ANY /event"
+  target    = "integrations/${aws_apigatewayv2_integration.event.id}"
+}
+
+resource "aws_lambda_permission" "event" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.event.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
+}
+# end block /event
