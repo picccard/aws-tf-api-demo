@@ -30,3 +30,6 @@ override.tf.json
 
 # any lock files
 *.lock.*
+
+# remove .zip builds
+builds/*

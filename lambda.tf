@@ -23,8 +23,8 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 data "archive_file" "hello" {
   type = "zip"
 
-  source_dir  = "${path.module}/hello"
-  output_path = "${path.module}/hello.zip"
+  source_dir  = "./src/hello"
+  output_path = "./builds/hello.zip"
 }
 
 resource "aws_lambda_function" "hello" {
