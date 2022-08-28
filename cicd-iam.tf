@@ -4,13 +4,13 @@ resource "aws_iam_role" "build_project_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-    {
-      Effect = "Allow"
-      Principal = {
-        Service = ["codebuild.amazonaws.com"]
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = ["codebuild.amazonaws.com"]
+        }
+        Action = "sts:AssumeRole"
       }
-      Action = "sts:AssumeRole"
-    }
     ]
   })
 }
@@ -269,17 +269,17 @@ resource "aws_iam_role" "event_role" {
   name = "event-role"
 
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "events.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-        }
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "events.amazonaws.com"
+        },
+        "Action" : "sts:AssumeRole"
+      }
     ]
-})
+  })
 }
 
 resource "aws_iam_role_policy" "event_role_policy" {
@@ -287,17 +287,17 @@ resource "aws_iam_role_policy" "event_role_policy" {
   role = aws_iam_role.event_role.id
 
   policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "codepipeline:StartPipelineExecution"
-            ],
-            "Resource": [
-                "*"
-            ]
-        }
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "codepipeline:StartPipelineExecution"
+        ],
+        "Resource" : [
+          "*"
+        ]
+      }
     ]
-})
+  })
 }

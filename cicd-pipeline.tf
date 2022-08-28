@@ -73,16 +73,16 @@ resource "aws_codepipeline" "python_app_pipeline" {
     action {
       category = "Source"
       configuration = {
-        "BranchName" = aws_codecommit_repository.api.default_branch
+        "BranchName"           = aws_codecommit_repository.api.default_branch
+        "RepositoryName"       = aws_codecommit_repository.api.repository_name
         "PollForSourceChanges" = "false" # true starts pipeline on every codechange, no need for event
-        "RepositoryName" = aws_codecommit_repository.api.repository_name
       }
       #input_artifacts = []
       name             = "Source"
       output_artifacts = ["SourceArtifact", ]
       owner            = "AWS"
       provider         = "CodeCommit"
-      version   = "1"
+      version          = "1"
       #run_order = 1
     }
   }
@@ -119,7 +119,7 @@ resource "aws_codepipeline" "python_app_pipeline" {
       output_artifacts = ["BuildArtifact", ]
       owner            = "AWS"
       provider         = "CodeBuild"
-      version   = "1"
+      version          = "1"
       #run_order = 1
     }
   }
@@ -142,8 +142,8 @@ resource "aws_cloudwatch_event_rule" "startpipeline" {
 }
 
 resource "aws_cloudwatch_event_target" "pipeline" {
-  rule      = aws_cloudwatch_event_rule.startpipeline.name
-  arn       = aws_codepipeline.python_app_pipeline.arn
+  rule = aws_cloudwatch_event_rule.startpipeline.name
+  arn  = aws_codepipeline.python_app_pipeline.arn
 
   role_arn = aws_iam_role.event_role.arn
 }
