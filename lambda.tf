@@ -8,10 +8,9 @@ resource "aws_iam_role" "lambda_exec" {
       Effect = "Allow"
       Sid    = ""
       Principal = {
-        Service = "lambda.amazonaws.com"
+        Service = [ "lambda.amazonaws.com" ]
       }
-      }
-    ]
+    }]
   })
 }
 
@@ -41,7 +40,7 @@ resource "aws_lambda_function" "hello" {
   handler = "lambda_function.lambda_handler"
 
   filename = data.archive_file.hello.output_path
-  source_code_hash = data.archive_file.hello.output_base64sha256
+  # source_code_hash = data.archive_file.hello.output_base64sha256
 
   role = aws_iam_role.lambda_exec.arn
 }
@@ -53,7 +52,7 @@ resource "aws_lambda_function" "event" {
   handler = "lambda_function.lambda_handler"
 
   filename = data.archive_file.event.output_path
-  source_code_hash = data.archive_file.event.output_base64sha256
+  # source_code_hash = data.archive_file.event.output_base64sha256
 
   role = aws_iam_role.lambda_exec.arn
 }
